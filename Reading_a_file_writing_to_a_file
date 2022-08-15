@@ -1,0 +1,56 @@
+with open('Cook_Book.txt', encoding='utf-8') as a_file:
+    cook_book = {}
+    for dish in a_file:
+        ingredients_list = []
+        dishes = dish.strip()
+        amount = int(a_file.readline().strip())
+        for ingredient in range(amount):
+            ingredients_dict = {}
+            ingredient_name, amount_ingredient, unit = a_file.readline().split(' | ')
+            ingredients_dict['ingredient_name'] = ingredient_name.strip()
+            ingredients_dict['amount_ingredient'] = int(amount_ingredient.strip())
+            ingredients_dict['unit'] = unit.strip()
+            ingredients_list.append(ingredients_dict)
+        a_file.readline().strip()
+        cook_book[dishes] = ingredients_list
+
+def get_shop_list_by_dishes(dishes, person_count):
+    info_ingredients_dict = {}
+    for dish in dishes: #поочередно берем аргументы из списка переданного в функцию
+        info_ingredients = cook_book[dish] #присваиваем переменной словарь со значениями, взятыми из словаря cook_book по ключу который взяли на предыдущей строке
+        for ingredient in info_ingredients: #поочередно берем вложенные словари info_ingredients
+            amount = ingredient['amount_ingredient'] * person_count  #и присваиваем эти ключи переменным
+            un = ingredient['unit']
+            name = ingredient['ingredient_name']
+            if name not in info_ingredients_dict:                                 #если если этой переменной нет в словаре info_ingredients_dict
+                info_ingredients_dict[name] = {'measure': un, 'quantity': amount} #то добавить ее в этот словарь в виде ключа со значением {'measure': un, 'quantity': amount}
+            else:
+                info_ingredients_dict[name]['quantity'] += amount                 #если есть такая переменная то прибавить значение amount к значению ключа 'quantity'
+    return info_ingredients_dict     #завершение функции, возвращение результата
+print(get_shop_list_by_dishes(['Фахитос', 'Омлет'], 3))  #передаем аргументы в функцию
+
+import os
+
+FILE_DZ_DIR = 'dz'
+ROOT_PATH = os.getcwd()
+directory = 'C:\Чтение файла запись в файл\dz'
+files = os.listdir(directory)
+texts = filter(lambda x: x.endswith('.txt'), files)
+new_dict = {}
+for file in texts:
+    full_path = os.path.join(ROOT_PATH, FILE_DZ_DIR, file)
+    with open(full_path, encoding='utf-8') as text:
+        massage = []
+        for line in text:
+            massage.append(line.strip())
+            lens = len(massage)
+        new_dict[file] = [lens, massage]
+line_list = sorted(new_dict.items(), key=lambda item: item[1])
+
+with open('Massage.txt', 'w', encoding='utf-8') as f:
+    for f_1 in line_list:
+        f.write(f'{f_1[0]}\n')
+        f.write(f'{f_1[1][0]}\n')
+        for f_2 in f_1[1][1]:
+            info = f_2
+            f.write(f'{info}\n')
